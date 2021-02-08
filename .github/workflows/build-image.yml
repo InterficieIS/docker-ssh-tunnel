@@ -13,8 +13,14 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Compute next candidate version
+      id: next
+      uses: InterficieIS/docker-version-bydate@v2.0.0
+      with:
+        image: interficie/ssh-tunnel
+
     - name: Build the tagged Docker image
-      run: docker build .  --tag interficie/ssh-tunnel:${GITHUB_SHA::8} --tag interficie/ssh-tunnel:latest
+      run: docker build . --tag ${{ steps.next.outputs.version }} --tag interficie/ssh-tunnel:latest
 
     - name: Login to DockerHub Registry
       run: echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
